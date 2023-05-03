@@ -32,3 +32,5 @@ while True:
                 quit()
 
     clock.tick(60)
+    pygame.display.update()
+    
