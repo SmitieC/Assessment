@@ -19,5 +19,5 @@ game_icon = pygame.image.load('game_icon.png')
 pygame.display.set_icon(game_icon)
 
 
-# Pauses the program for 5 seconds before it closes
+# Pauses the program for 5 seconds before it closes for testing purposes
 time.sleep(5)

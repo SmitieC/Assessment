@@ -14,5 +14,5 @@ screen = pygame.display.set_mode((700, 925))
 # Set Window Name to be Car Driving Game
 pygame.display.set_caption("Car Driving Game")
 
-# Pauses the program for 5 seconds before it closes
+# Pauses the program for 5 seconds before it closes for testing purposes
 time.sleep(5)

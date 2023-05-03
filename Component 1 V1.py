@@ -11,5 +11,5 @@ pygame.init()
 # Creates a Pygame window with a size of 700 pixels wide and 925 pixels tall
 screen = pygame.display.set_mode((700, 925))
 
-# Pauses the program for 5 seconds before it closes
+# Pauses the program for 5 seconds before it closes for testing purposes
 time.sleep(5)
