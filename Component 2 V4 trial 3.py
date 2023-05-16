@@ -1,10 +1,11 @@
-"""Car Assessment Game -- Component 2 Version 3
-Version 4 to Create driver car controls trial 1
+"""Car Assessment Game -- Component 2 Version 4
+Version 4 to Create driver car controls trial 3
 By Conor Smith"""
 
 # Imports the Pygame library for graphics and the Time library for pausing
 import pygame
 import time
+import math
 
 from pygame.sprite import AbstractGroup
 
@@ -23,22 +24,30 @@ clock = pygame.time.Clock()
 class Driver(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, *groups: AbstractGroup) -> None:
         super().__init__(*groups)
-        self.image = pygame.transform.scale(pygame.image.load('driver_car.png'), (73, 125))
+        self.orig_image = pygame.transform.scale(pygame.image.load('driver_car.png'), (73, 125))
+        self.image = self.orig_image
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+        self.angle = 0
 
     def move_right(self):
-        self.image = pygame.transform.rotate(self.image, -30)
-        self.x_pos += VELOCITY
+        self.angle = -15
+        if self.x_pos < 700 - VELOCITY:  # check if car is within screen
+            self.x_pos += VELOCITY
 
     def move_left(self):
-        self.image = pygame.transform.rotate(self.image, 30)  # make car look like turning
-        self.x_pos -= VELOCITY
+        self.angle = 15  # make car look like turning
+        if self.x_pos > VELOCITY:  # check if car is within screen
+            self.x_pos -= VELOCITY
 
     def move_up(self):
-        self.image = pygame.transform.rotate(self.image, 0)  # make car look like stright
+        self.angle = 0  # make car look like straight
 
+    def update(self):
+        self.image = pygame.transform.rotate(self.orig_image, self.angle)
+        self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+        self.rect = self.rect.clamp(screen.get_rect())
 
 # Game Variables and constants
 game_over = False
@@ -49,17 +58,17 @@ driver_group = pygame.sprite.GroupSingle()
 driver = Driver(350, 700)
 driver_group.add(driver)
 
-
-
 # Game Loop
 while True:
     if not game_over:
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             driver.move_right()
-        if keys[pygame.K_LEFT]:
+        elif keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             driver.move_left()
+        else:
+            driver.move_up()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -77,4 +86,4 @@ while True:
 pygame.quit()
 
 
-# code currently amkes car spiral off screen
+#code now instead makes it so car will move foreward if both keys pressed
