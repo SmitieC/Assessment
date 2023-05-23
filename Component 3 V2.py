@@ -51,35 +51,43 @@ class Driver(pygame.sprite.Sprite):
         self.rect = self.rect.clamp(screen.get_rect())
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos):
+    def __init__(self, x_pos, y_pos):  # sourcery skip: merge-list-append
         super().__init__()
         self.x_pos = x_pos
         self.y_pos = y_pos
-        self.all_cars = [
-            pygame.transform.scale(
-                pygame.image.load("car_2.png"), (50, 90)
-            )
-        ]
+        self.running_sprites = []
         self.running_sprites.append(pygame.transform.scale(
-            pygame.image.load("car_3.png"), (50, 90)))
+            pygame.image.load("car_2.png"), (73, 125)))
         self.running_sprites.append(pygame.transform.scale(
-            pygame.image.load("car_4.png"), (50, 90)))
+            pygame.image.load("car_3.png"), (73, 125)))
         self.running_sprites.append(pygame.transform.scale(
-            pygame.image.load("car_5.png"), (50, 90)))
+            pygame.image.load("car_4.png"), (73, 125)))
         self.running_sprites.append(pygame.transform.scale(
-            pygame.image.load("car_6.png"), (50, 90)))
+            pygame.image.load("car_5.png"), (73, 125)))
+        self.running_sprites.append(pygame.transform.scale(
+            pygame.image.load("car_6.png"), (73, 125)))
         
-        self.image = random.choice(self.all_cars)
+        self.image = random.choice(self.running_sprites)
+        if self.x_pos > 400:
+            self.image = pygame.transform.rotate(self.image, 180)
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
 
+    
     def update(self):
-        self.x_pos -= game_speed
+        self.y_pos += VELOCITY  # Move obstacle downwards
         self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
+    
+            
 
 # Game Variables and constants
 game_over = False
 VELOCITY = 5
 game_speed = 5
+lane_pos = []
+lane_pos.append(115)
+lane_pos.append(253)
+lane_pos.append(436)
+lane_pos.append(593)
 
 road = pygame.image.load('Road-1.png')
 road = pygame.transform.rotate(road, 90)
@@ -95,45 +103,48 @@ driver_group.add(driver)
 road_y = -925
 
 # Game Loop
-while True:
-    if not game_over:
+while not game_over:
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
-            driver.move_right()
-        elif keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
-            driver.move_left()
-        else:
-            driver.move_up()
+    # Handle input
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
+        driver.move_right()
+    elif keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+        driver.move_left()
+    else:
+        driver.move_up()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game_over = True
+    # Spawn obstacles
+    if random.random() < 0.02 and len(obstacle_group) < 4:  # Increase probability of obstacles spawning
+        obstacle_x = random.choice(lane_pos)
+        obstacle_y = -100  # Spawn obstacles at the top of the screen
+        obstacle = Obstacle(obstacle_x, obstacle_y)
+        obstacle_group.add(obstacle)
 
-        # Decrease y-position of road to make it move downwards
-        road_y += VELOCITY
-        if road_y >= 0:
-            road_y = -925
- # Add obstacles to the group randomly based on a probability distribution
-        if random.random() < 0.01:
-            obstacle_x = random.randint(0, 700)
-            obstacle_y = random.randint(-1000, -100)
-            obstacle = Obstacle(obstacle_x, obstacle_y)
-            obstacle_group.add(obstacle)
+    # Update game objects
+    driver_group.update()
+    obstacle_group.update()  # Update obstacle positions
 
-    if not game_over:
-        driver_group.update()
-        screen.fill((255, 255, 255))  # Fill the screen with white before drawing the sprite
+    # Draw game objects
+    screen.fill((255, 255, 255))
+    screen.blit(road, (0, road_y))
+    screen.blit(road, (0, road_y + 925))
+    driver_group.draw(screen)
+    obstacle_group.draw(screen)
 
-        # Draw the road at its current y-position
-        screen.blit(road, (0, road_y))
-        screen.blit(road, (0, road_y + 925))
+    # Update display
+    pygame.display.update()
 
-        # Update and draw obstacles in the group
-        obstacle_group.update()
-        obstacle_group.draw(screen)
+    # Move road
+    road_y += VELOCITY
+    if road_y >= 0:
+        road_y = -925
 
-        driver_group.draw(screen)
-
+    # Control frame rate
     clock.tick(60)
+
     pygame.display.update()
