@@ -1,5 +1,5 @@
-"""Car Assessment Game -- Component 3 Version 3
-Version 3 to make obstacles move at diffrent rates
+"""Car Assessment Game -- Component 4 Version 1
+Version 1 to create collision between cars
 By Conor Smith"""
 
 # Imports the Pygame library for graphics and the Time library for pausing
@@ -120,6 +120,10 @@ while not game_over:
         driver.move_left()
     else:
         driver.move_up()
+    
+    # Check for collisions
+    if pygame.sprite.spritecollide(driver, obstacle_group, False):
+        game_over = True
 
     # Spawn obstacles
     if random.random() < 0.02 and len(obstacle_group) < 4:  # Increase probability of obstacles spawning
