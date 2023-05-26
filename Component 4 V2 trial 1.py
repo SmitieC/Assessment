@@ -108,9 +108,11 @@ driver_group.add(driver)
 # Initialize y-position of road
 road_y = -925
 
+game_over = False
+restart_game = False
 
 # Game Loop
-while not game_over:
+while True:
     # Handle events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -133,6 +135,14 @@ while not game_over:
         screen.blit(game_font.render("Game Over", True, black), (200, 200))
         screen.blit(game_font.render("Press r to restart", True, black), (200, 250))
         screen.blit(game_font.render("Press q to quit", True, black), (200, 300))
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_r]:
+            # Restart the game
+            break
+        elif keys[pygame.K_q]:
+            # End the game completely
+            game_over = True
 
     # Spawn obstacles
     if random.random() < 0.02 and len(obstacle_group) < 4:  # Increase probability of obstacles spawning
