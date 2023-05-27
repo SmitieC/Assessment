@@ -190,9 +190,12 @@ def game_over_screen():
     with open("high_score.txt", "r") as f:
         high_score_str = f.read().strip()  # Remove leading/trailing whitespace
     if high_score_str:
-        high_score = float(high_score_str)
+        try:
+            high_score = float(high_score_str)
+        except ValueError:
+            high_score = 0
     else:
-        high_score = 0.0  # Set to a default value if file is empty
+        high_score = 0  # Set to a default value if file is empty
     score_text = font.render(f"Your score was: {score}", True, (0, 0, 0))
     if score > high_score:
         high_score = score

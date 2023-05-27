@@ -1,5 +1,6 @@
 """Car Assessment Game -- Component 3 Version 2
 Version 2 to make obstacles
+trial 2 to spawn obstacles in lanes
 By Conor Smith"""
 
 # Imports the Pygame library for graphics and the Time library for pausing
@@ -119,7 +120,7 @@ while not game_over:
         driver.move_up()
 
     # Spawn obstacles
-    if random.random() < 0.02 and len(obstacle_group) < 4:  # Increase probability of obstacles spawning
+    if random.random() < 0.02:  # Increase probability of obstacles spawning
         obstacle_x = random.choice(lane_pos)
         obstacle_y = -100  # Spawn obstacles at the top of the screen
         obstacle = Obstacle(obstacle_x, obstacle_y)
@@ -133,7 +134,7 @@ while not game_over:
     screen.fill((255, 255, 255))
     screen.blit(road, (0, road_y))
     screen.blit(road, (0, road_y + 925))
-    driver_group.draw(screen)
+    #driver_group.draw(screen)
     obstacle_group.draw(screen)
 
     # Update display
