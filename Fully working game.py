@@ -78,6 +78,7 @@ def game_loop():
                 self.image = pygame.transform.rotate(self.image, 180)
             self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
             self.speed = random.randint(10, 15)
+            self.added_to_score = False  # initialize added_to_score to False
 
         def update(self):
             self.y_pos += self.speed  # Move obstacle downwards
@@ -85,8 +86,12 @@ def game_loop():
             if self.y_pos > 950:  # if obstacle is off the screen, kill
                 self.kill()
 
+            if not self.added_to_score and self.y_pos >= 750:
+                global score
+                score += 1
+                self.added_to_score = True
+
     # Game Variables and constants
-    score_loop = 0
     VELOCITY = 5
     lane_pos = [115, 253, 436, 593]
 
@@ -98,7 +103,7 @@ def game_loop():
     driver_group = pygame.sprite.GroupSingle()
     obstacle_group = pygame.sprite.Group()
 
-    driver = Driver(350, 700)
+    driver = Driver(253, 700)
     driver_group.add(driver)
 
     # Initialize y-position of road
@@ -124,6 +129,7 @@ def game_loop():
         # Check for collisions
         if pygame.sprite.spritecollide(driver, obstacle_group, False):
             game_over_screen()
+        
 
         # Spawn obstacles
         if random.random() < 0.02 and len(obstacle_group) < 4:
@@ -149,14 +155,8 @@ def game_loop():
         driver_group.draw(screen)
         obstacle_group.draw(screen)
 
-        # Draw score
-        score_loop += 1
-        if score_loop == 6:
-            score_loop = 0
-            score += 1
-
         # display player score on screen
-        player_score_text = font.render(f"Score: {(score / 10)}", True,
+        player_score_text = font.render(f"Score: {(score)}", True,
                                         (255, 255, 255))
         screen.blit(player_score_text, (55, 10))
 
@@ -193,9 +193,9 @@ def game_over_screen():
         high_score = float(high_score_str)
     else:
         high_score = 0.0  # Set to a default value if file is empty
-    score_text = font.render(f"Your score was: {score / 10}", True, (0, 0, 0))
-    if score / 10 > high_score:
-        high_score = score / 10
+    score_text = font.render(f"Your score was: {score}", True, (0, 0, 0))
+    if score > high_score:
+        high_score = score
         with open("high_score.txt", "w") as f:
             f.write(str(high_score))
     high_score_text = font.render(f"High score: {high_score}", True, (0, 0, 0))

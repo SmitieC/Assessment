@@ -73,19 +73,24 @@ def game_loop():
                 pygame.image.load("car_5.png"), (73, 125)))
             self.running_sprites.append(pygame.transform.scale(
                 pygame.image.load("car_6.png"), (73, 125)))
-            
+
             self.image = random.choice(self.running_sprites)
             if self.x_pos > 400:
                 self.image = pygame.transform.rotate(self.image, 180)
             self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
             self.speed = random.randint(10, 15)
+            self.added_to_score = False  # initialize added_to_score to False
 
-        
         def update(self):
             self.y_pos += self.speed  # Move obstacle downwards
             self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
-            if self.y_pos > 950:
+            if self.y_pos > 950:  # if obstacle is off the screen, kill
                 self.kill()
+
+            if not self.added_to_score and self.y_pos >= 750:
+                global score
+                score += 1
+                self.added_to_score = True
         
                 
 
@@ -142,7 +147,6 @@ def game_loop():
                 obstacle_x = random.choice(lane_pos) # Generate new x_pos for obstacle until it's not on top of another one
             obstacle = Obstacle(obstacle_x, obstacle_y)
             obstacle_group.add(obstacle)
-            score += 1
 
         # Update game objects
         driver_group.update()
@@ -200,4 +204,4 @@ def game_over_screen():
 
 game_loop()
 
-# this trial adds score based on each obstacle spawned
+# this trial adds score based on each obstacle passed
