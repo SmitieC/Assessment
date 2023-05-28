@@ -116,7 +116,7 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 with open("high_score.txt", "r") as f:
-                    high_score_str = f.read().strip()  
+                    high_score_str = f.read().strip()
                     # Remove leading/trailing whitespace
                 if high_score_str:
                     try:
@@ -128,7 +128,7 @@ def game_loop():
                 if score > high_score:
                     high_score = score
                     with open("high_score.txt", "w") as f:
-                        f.write(str(high_score))            
+                        f.write(str(high_score))
                 pygame.quit()
                 return
 
@@ -146,7 +146,6 @@ def game_loop():
         # Check for collisions
         if pygame.sprite.spritecollide(driver, obstacle_group, False):
             game_over_screen()
-        
 
         # Spawn obstacles
         if player_moved and random.random() < 0.02 and len(obstacle_group) < 4:
@@ -173,7 +172,7 @@ def game_loop():
         obstacle_group.draw(screen)
 
         # display player score on screen
-        player_score_text = font.render(f"Score: {(score)}", True,
+        player_score_text = font.render(f"Score: {score}", True,
                                         (255, 255, 255))
         screen.blit(player_score_text, (55, 10))
 
